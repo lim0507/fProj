@@ -4,20 +4,18 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    [Header("Weapon Stats")]
-    public int damagePerHit = 1;
-    public float range = 5f;
+    public string weaponName;
+    public int hitsToBreak = 5;
+    public float attackCoolDown = 0.3f;
 
-    public void Use(RaycastHit hit)
+    float lastAttackTime = 0f;
+
+    public virtual void Attack()
     {
-        DirtBlock dirt = hit.collider.GetComponent<DirtBlock>();
+        if (Time.time - lastAttackTime < attackCoolDown)
+            return;
 
-        if (dirt != null)
-        {
-            for (int i = 0; i < damagePerHit; i++)
-            {
-                dirt.Hit();
-            }
-        }
+        lastAttackTime = Time.time;
+        
     }
 }
