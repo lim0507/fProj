@@ -45,8 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb65062e5e8a3ce48a811d674a4d5636, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damagePerHit: 1
-  range: 5
+  weaponName: Shovel
+  hitsToBreak: 5
+  attackCoolDown: 0.3
 --- !u!1001 &3558604326195321158
 PrefabInstance:
   m_ObjectHideFlags: 0
