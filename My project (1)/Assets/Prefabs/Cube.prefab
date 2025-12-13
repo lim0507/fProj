@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1479741835101270609}
   - component: {fileID: 3764254574641182466}
   - component: {fileID: 2431937391734057008}
-  - component: {fileID: -8969620020479643411}
+  - component: {fileID: 5551177034810652108}
   m_Layer: 3
   m_Name: Cube
   m_TagString: Untagged
@@ -106,7 +106,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-8969620020479643411
+--- !u!114 &5551177034810652108
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,7 +115,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1057701655481952889}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fbd32100c5fff04591abf924a683a5d, type: 3}
+  m_Script: {fileID: 11500000, guid: fba1c9757fb510f43ae3347b6d9c60a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHitCount: 5
+  type: 0
+  maxHP: 3
+  hp: 0
+  dropCount: 1
+  mineable: 1
