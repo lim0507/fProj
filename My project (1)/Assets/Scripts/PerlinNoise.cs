@@ -4,51 +4,56 @@ using UnityEngine;
 
 public class PerlinNoise : MonoBehaviour
 {
-    [Header("Map Size")]
-    public int holeSize = 100;
-    public int maxDepth = 100;
+    public Transform player;
 
-    [Header("Prefabs")]
+    [Header("Generation")]
+    public int horizontalRange = 8;   // 플레이어 기준 가로 반경
+    public int depthRange = 15;        // 아래로 생성할 깊이
+    public int maxDepth = 50;          // 전체 최대 깊이
+
     public GameObject dirtBlock;
-    public GameObject StoneBlock;
-    public GameObject housePrefab;
+    public GameObject stoneBlock;
 
-    void Start()
+    HashSet<Vector3Int> generatedBlocks = new HashSet<Vector3Int>();
+
+    void Update()
     {
-        GenerateSurface();
-        GenerateUnderground();
+        GenerateAroundPlayer();
     }
 
-    void GenerateSurface()
+    void GenerateAroundPlayer()
     {
-        // 지표면 먼저 생성
-        for (int x = -holeSize; x <= holeSize; x++)
-        {
-            for (int z = -holeSize; z <= holeSize; z++)
-            {
-                Instantiate(dirtBlock,
-                    new Vector3(x, 0, z),
-                    Quaternion.identity,
-                    transform);
-            }
-        }
+        Vector3Int playerPos = Vector3Int.RoundToInt(player.position);
 
-        // 집을 지표면 위에 배치
-        Instantiate(housePrefab, new Vector3(0, 1, 0), Quaternion.identity);
-    }
-
-    void GenerateUnderground()
-    {
-        for (int x = -holeSize; x <= holeSize; x++)
+        for (int x = -horizontalRange; x <= horizontalRange; x++)
         {
-            for (int z = -holeSize; z <= holeSize; z++)
+            for (int z = -horizontalRange; z <= horizontalRange; z++)
             {
-                for (int y = -1; y >= -maxDepth; y--)
+                for (int y = -depthRange; y <= 1; y++)
                 {
-                    Instantiate(dirtBlock,
-                        new Vector3(x, y, z),
-                        Quaternion.identity,
-                        transform);
+                    int worldY = playerPos.y + y;
+                    if (worldY < -maxDepth) continue;
+
+                    Vector3Int blockPos = new Vector3Int(
+                        playerPos.x + x,
+                        worldY,
+                        playerPos.z + z
+                    );
+
+                    if (generatedBlocks.Contains(blockPos)) continue;
+
+                    // 지표면 위는 생성 안 함
+                    if (blockPos.y > 0) continue;
+
+                    float noise = Mathf.PerlinNoise(
+                        blockPos.x * 0.1f,
+                        blockPos.z * 0.1f
+                    );
+
+                    GameObject prefab = noise > 0.6f ? stoneBlock : dirtBlock;
+
+                    Instantiate(prefab, blockPos, Quaternion.identity, transform);
+                    generatedBlocks.Add(blockPos);
                 }
             }
         }

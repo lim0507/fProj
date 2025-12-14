@@ -31,7 +31,10 @@ public class CraftingPanel : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
+        {
             SetOpen(!isOpen);
+            Time.timeScale = isOpen ? 0f : 1f;
+        }
     }
     public void SetOpen(bool open)
     {

@@ -7,7 +7,6 @@ public class InventoryUI : MonoBehaviour
 {
     public Sprite dirtSprite;
     public Sprite stoneSprite;
-    public Sprite waterSprite;
     public Sprite shovelSprite;
 
     public List<Transform> Slot = new List<Transform>();
