@@ -5,11 +5,12 @@ using UnityEngine;
 public class PerlinNoise : MonoBehaviour
 {
     [Header("Map Size")]
-    public int holeSize = 10;
-    public int maxDepth = 200;
+    public int holeSize = 100;
+    public int maxDepth = 100;
 
     [Header("Prefabs")]
     public GameObject dirtBlock;
+    public GameObject StoneBlock;
     public GameObject housePrefab;
 
     void Start()

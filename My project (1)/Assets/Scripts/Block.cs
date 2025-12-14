@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemType { Dirt, Grass, Water, Axe }
+public enum ItemType { Dirt, Stone }
 public class Block : MonoBehaviour
 {
     [Header("Block Stat")]
