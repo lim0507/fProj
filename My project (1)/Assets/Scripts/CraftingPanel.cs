@@ -31,10 +31,20 @@ public class CraftingPanel : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
+    {
+        SetOpen(!isOpen);
+
+        if (isOpen)
         {
-            SetOpen(!isOpen);
-            Time.timeScale = isOpen ? 0f : 1f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
     }
     public void SetOpen(bool open)
     {

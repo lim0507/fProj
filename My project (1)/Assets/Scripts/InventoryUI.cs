@@ -8,6 +8,13 @@ public class InventoryUI : MonoBehaviour
     public Sprite dirtSprite;
     public Sprite stoneSprite;
     public Sprite shovelSprite;
+    public Sprite screwSprite;
+    public Sprite canSprite;
+    public Sprite plasticSprite;
+
+    public CraftingPanel craftingPanel;
+    public SlotItemPrefab slotPrefab;
+    public Transform slotRoot;
 
     public List<Transform> Slot = new List<Transform>();
     public GameObject SlotItem;
@@ -27,7 +34,9 @@ public class InventoryUI : MonoBehaviour
         {
             var go = Instantiate(SlotItem, Slot[idx].transform);
             go.transform.localPosition = Vector3.zero;
+
             SlotItemPrefab sItem = go.GetComponent<SlotItemPrefab>();
+            sItem.craftingPanel = craftingPanel;
             items.Add(go);
 
             switch (item.Key)
@@ -37,6 +46,17 @@ public class InventoryUI : MonoBehaviour
                     break;
                 case ItemType.Stone:
                     sItem.ItemSetting(dirtSprite, "x" + item.Value.ToString(), item.Key);
+                    break;
+                case ItemType.Screw:
+                    sItem.ItemSetting(screwSprite, "x" + item.Value, item.Key);
+                    break;
+
+                case ItemType.Can:
+                    sItem.ItemSetting(canSprite, "x" + item.Value, item.Key);
+                    break;
+
+                case ItemType.Plastic:
+                    sItem.ItemSetting(plasticSprite, "x" + item.Value, item.Key);
                     break;
             }
             idx++;

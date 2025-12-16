@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: Recipe
   m_EditorClassIdentifier: 
   displayName: 
-  inputs: []
-  outputs: []
+  inputs:
+  - type: 0
+    count: 2
+  outputs:
+  - type: 1
+    count: 1
