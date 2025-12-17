@@ -2,51 +2,130 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum WeaponType
+{
+    Shovel,
+    Drill,
+    Bomb
+}
+
 public class WeaponManager : MonoBehaviour
 {
     public Transform hand;
     public Weapon currentWeapon;
 
     [Header("Weapon List")]
-    public GameObject[] weaponPrefabs;   // 삽, 드릴, 폭탄 …
+    public GameObject[] weaponPrefabs;   // 전체 무기 프리팹
+    public WeaponType[] weaponTypes;     // 프리팹과 같은 순서
+
+    [Header("Weapon Shop")]
+    public List<WeaponShopItem> weaponShopItems;
 
     int currentIndex = 0;
 
+    // 해금된 무기 목록
+    HashSet<WeaponType> unlockedWeapons = new HashSet<WeaponType>();
+
     void Start()
     {
-        // 시작 시 손 안에 있는 무기 자동 인식
-        currentWeapon = hand.GetComponentInChildren<Weapon>();
+        // 기본 무기 해금 (삽)
+        UnlockWeapon(WeaponType.Shovel);
+
+        EquipUnlockedFirst();
     }
 
     void Update()
     {
-        // TAB 키 눌러 무기 교체
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             SwitchToNextWeapon();
         }
     }
 
+    public bool BuyWeapon(WeaponType type, PlayerMoney money)
+    {
+        if (HasWeapon(type))
+        {
+            Debug.Log("이미 구매한 무기");
+            return false;
+        }
+
+        WeaponShopItem item =
+            weaponShopItems.Find(x => x.weaponType == type);
+
+        if (item == null)
+        {
+            Debug.LogError("무기 상점 데이터 없음");
+            return false;
+        }
+
+        if (money.money < item.buyPrice)
+        {
+            Debug.Log("돈 부족");
+            return false;
+        }
+
+        money.AddMoney(-item.buyPrice);
+        UnlockWeapon(type);
+
+        Debug.Log($"무기 구매 완료: {type}");
+        return true;
+    }
+    public void UnlockWeapon(WeaponType type)
+    {
+        if (unlockedWeapons.Contains(type))
+            return;
+
+        unlockedWeapons.Add(type);
+        Debug.Log($"[Weapon] 해금됨: {type}");
+    }
+
+    public bool HasWeapon(WeaponType type)
+    {
+        return unlockedWeapons.Contains(type);
+    }
+
     public void SwitchToNextWeapon()
     {
-        if (weaponPrefabs.Length == 0) return;
+        int count = Mathf.Min(weaponPrefabs.Length, weaponTypes.Length);
+        if (count == 0) return;
 
-        currentIndex++;
+        for (int i = 0; i < count; i++)
+        {
+            currentIndex++;
+            if (currentIndex >= count)
+                currentIndex = 0;
 
-        // 리스트 순환
-        if (currentIndex >= weaponPrefabs.Length)
-            currentIndex = 0;
+            if (unlockedWeapons.Contains(weaponTypes[currentIndex]))
+            {
+                EquipWeapon(weaponPrefabs[currentIndex]);
+                return;
+            }
+        }
+    }
 
-        EquipWeapon(weaponPrefabs[currentIndex]);
+    void EquipUnlockedFirst()
+    {
+        int count = Mathf.Min(weaponPrefabs.Length, weaponTypes.Length);
+
+        for (int i = 0; i < count; i++)
+        {
+            if (unlockedWeapons.Contains(weaponTypes[i]))
+            {
+                currentIndex = i;
+                EquipWeapon(weaponPrefabs[i]);
+                return;
+            }
+        }
+
+        Debug.LogError("[WeaponManager] 해금된 무기를 찾을 수 없음");
     }
 
     public void EquipWeapon(GameObject weaponPrefab)
     {
-        // 기존 무기 제거
         if (currentWeapon != null)
             Destroy(currentWeapon.gameObject);
 
-        // 새 무기 생성
         GameObject newWeapon = Instantiate(weaponPrefab, hand);
         currentWeapon = newWeapon.GetComponent<Weapon>();
 

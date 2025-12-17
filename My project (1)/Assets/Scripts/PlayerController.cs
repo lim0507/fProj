@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpForce = 5f;
     public float gravity = -9.81f;
+    public bool inputLocked = false;
 
     [Header("Camera")]
     public Transform cameraTransform;
@@ -31,6 +32,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (inputLocked)
+            return;
+
         GroundCheck();
         LookAround();
         Move();
