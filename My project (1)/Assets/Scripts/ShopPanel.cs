@@ -41,6 +41,8 @@ public class ShopPanel : MonoBehaviour
     public GameObject weaponGroup;
     public GameObject upgradeGroup;
     public GameObject buffGroup;
+
+
     void Start()
     {
         SetOpen(false);
@@ -200,7 +202,7 @@ public class ShopPanel : MonoBehaviour
         else
             SetInfo("구매 실패");
     }
-    void SetInfo(string msg)
+    public void SetInfo(string msg)
     {
         if (infoText)
             infoText.text = msg;
@@ -342,4 +344,5 @@ public class ShopPanel : MonoBehaviour
     {
         if (buffGroup) buffGroup.SetActive(enable);
     }
+
 }
