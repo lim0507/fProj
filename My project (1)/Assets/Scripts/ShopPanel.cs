@@ -113,23 +113,38 @@ public class ShopPanel : MonoBehaviour
      * ========================= */
     public void Sell(ItemType type)
     {
-        if (inventory.GetCount(type) <= 0)
+        int count = inventory.GetCount(type);
+        if (count <= 0)
         {
             SetInfo("아이템이 없습니다.");
             return;
         }
 
-        ShopItem item = itemShopTable.Find(x => x.type == type);
-        if (item == null)
+        int price = 0;
+
+        // 아이템별 가격 설정
+        switch (type)
         {
-            SetInfo("판매 불가 아이템");
-            return;
+            case ItemType.Robot:
+                price = 20;
+                break;
+            case ItemType.Battery:
+                price = 10;
+                break;
+            case ItemType.Can:
+                price = 5;
+                break;
+            case ItemType.Screw:
+                price = 3;
+                break;
+            default:
+                SetInfo("판매 불가 아이템");
+                return;
         }
 
         inventory.Consume(type, 1);
-        playerMoney.AddMoney(item.sellPrice);
-
-        SetInfo($"{type} 판매 +{item.sellPrice}$");
+        playerMoney.AddMoney(price);
+        SetInfo($"{type} 판매 +{price}$");
     }
 
     /* =========================

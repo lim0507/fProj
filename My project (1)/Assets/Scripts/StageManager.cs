@@ -25,6 +25,12 @@ public class StageManager : MonoBehaviour
     public GameObject[] shopPrefabs; // Stage별 상점 프리팹
     private GameObject currentShop;
 
+    [Header("Game Clear UI")]
+    public GameObject gameClearUI;
+    public Text gameClearText;
+    public Button exitButton;
+    public GameObject gameClearOverlay;
+
     private bool canGoNext = false;
 
     int CurrentTargetMoney => baseTargetMoney + (currentStage - 1) * increasePerStage;
@@ -33,6 +39,11 @@ public class StageManager : MonoBehaviour
     {
         UpdateStageUI();
         SetupStageShop();
+
+        if (gameClearUI != null) gameClearUI.SetActive(false);
+
+        if (exitButton != null)
+            exitButton.onClick.AddListener(OnExitButtonClicked);
     }
 
     void Update()
@@ -43,9 +54,16 @@ public class StageManager : MonoBehaviour
             ShowHint($"M 키를 눌러 다음 지역으로 이동 (목표 {CurrentTargetMoney}$ 달성)");
         }
 
-        if (canGoNext && Input.GetKeyDown(KeyCode.M))
-        {
-            GoNextStage();
+        if(canGoNext && Input.GetKeyDown(KeyCode.M))
+    {
+            if (currentStage >= 3) // 마지막 스테이지일 경우
+            {
+                GameClear();
+            }
+            else
+            {
+                GoNextStage();
+            }
         }
     }
 
@@ -151,6 +169,31 @@ public class StageManager : MonoBehaviour
                 break;
         }
     }
+    void GameClear()
+    {
+        // 게임클리어 UI 켜기
+        if (gameClearOverlay != null)
+            gameClearOverlay.SetActive(true);
 
+        if (gameClearUI != null)
+            gameClearUI.SetActive(true);
+
+        if (gameClearText != null)
+            gameClearText.text = "게임 클리어!\n축하합니다!";
+
+        // 플레이어 행동 정지
+        inventory.ClearAll();
+        playerMoney.ResetMoney();
+        weaponManager.ResetWeapons();
+
+        // 상점도 닫기
+        if (shopPanel != null)
+            shopPanel.SetOpen(false);
+    }
+    void OnExitButtonClicked()
+    {
+        Application.Quit();
+    }
+    
 }
 

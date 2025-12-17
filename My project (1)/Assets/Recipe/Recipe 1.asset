@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2a22f958beff7f43be70fd4efd7598a, type: 3}
-  m_Name: Recipe
+  m_Name: Recipe 1
   m_EditorClassIdentifier: 
-  displayName: stone
+  displayName: Robot
   inputs:
-  - type: 0
-    count: 2
+  - type: 3
+    count: 3
   outputs:
-  - type: 1
+  - type: 6
     count: 1

@@ -21,7 +21,7 @@ public class PerlinNoise : MonoBehaviour
     public Transform shopTransform; // 상점 위치 연결
 
     HashSet<Vector3Int> generatedBlocks = new HashSet<Vector3Int>();
-    HashSet<Vector3Int> forbiddenPositions = new HashSet<Vector3Int>();
+    public HashSet<Vector3Int> forbiddenPositions = new HashSet<Vector3Int>();
 
     int lastGeneratedDepth = 0;
 

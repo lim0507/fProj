@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     Vector3 velocity;
 
     CharacterController controller;
+    public CraftingPanel craftingPanel;
 
     // Ãß°¡
     public float groundCheckDistance = 0.2f;
@@ -32,6 +33,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (craftingPanel != null && craftingPanel.IsOpen)
+            return;
+
         if (inputLocked)
             return;
 
@@ -39,6 +43,7 @@ public class PlayerController : MonoBehaviour
         LookAround();
         Move();
 
+        
         if (Input.GetMouseButtonDown(0))
         {
             GetComponent<WeaponManager>().Attack();
