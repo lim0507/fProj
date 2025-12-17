@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemType { Dirt, Stone, Screw, Can, Plastic}
+public enum ItemType { Dirt, Stone, Screw, Can, Plastic, Bomb}
 public class Block : MonoBehaviour
 {
     [Header("Block Stat")]
@@ -17,7 +17,6 @@ public class Block : MonoBehaviour
     [Range(0f, 1f)]
     public float extraDropChance = 0.3f;
 
-    // Start is called before the first frame update
     void Awake()
     {
         hp = maxHP;
@@ -35,14 +34,26 @@ public class Block : MonoBehaviour
         if (hp <= 0)
         {
             if (inven != null && dropCount > 0)
-                inven.Add(type, dropCount);
+            {
+                // 일반 드랍
+                int totalDrop = dropCount;
 
+                // BuffManager 체크
+                BuffManager buff = FindObjectOfType<BuffManager>();
+                if (buff != null && buff.doubleDrop)
+                    totalDrop *= 2;
+
+                inven.Add(type, totalDrop);
+            }
+
+            // 흙 블록 추가 드랍
             if (type == ItemType.Dirt)
                 TryExtraDrop(inven);
 
             Destroy(gameObject);
         }
     }
+
     void TryExtraDrop(Inventory inven)
     {
         if (inven == null) return;
@@ -57,12 +68,16 @@ public class Block : MonoBehaviour
             ItemType.Plastic
         };
 
-        ItemType randomItem =
-            extraItems[Random.Range(0, extraItems.Length)];
+        ItemType randomItem = extraItems[Random.Range(0, extraItems.Length)];
 
-        inven.Add(randomItem, 1);
+        // BuffManager 체크
+        BuffManager buff = FindObjectOfType<BuffManager>();
+        int extraCount = 1;
+        if (buff != null && buff.doubleDrop)
+            extraCount *= 2;
 
-        Debug.Log($"추가 드랍: {randomItem}");
+        inven.Add(randomItem, extraCount);
+
+        Debug.Log($"추가 드랍: {randomItem} x{extraCount}");
     }
-
 }

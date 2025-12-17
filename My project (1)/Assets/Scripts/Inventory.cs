@@ -39,4 +39,11 @@ public class Inventory : MonoBehaviour
         invenUI.UpdateInventory(this);
         return true;
     }
+    public void ClearAll()
+    {
+        items.Clear();
+        invenUI.selectedIndex = -1;
+        invenUI.Resetselection();
+        invenUI.UpdateInventory(this);
+    }
 }

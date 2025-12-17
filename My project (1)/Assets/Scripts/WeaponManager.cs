@@ -138,4 +138,13 @@ public class WeaponManager : MonoBehaviour
         if (currentWeapon != null)
             currentWeapon.Attack();
     }
+    public void ResetWeapons()
+    {
+        if (currentWeapon != null)
+            Destroy(currentWeapon.gameObject);
+
+        unlockedWeapons.Clear();
+        UnlockWeapon(WeaponType.Shovel); // 기본 무기만 해금
+        EquipUnlockedFirst();
+    }
 }

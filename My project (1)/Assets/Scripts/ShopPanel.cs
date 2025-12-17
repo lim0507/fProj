@@ -14,6 +14,11 @@ public class ShopPanel : MonoBehaviour
     public Inventory inventory;
     public PlayerMoney playerMoney;
     public WeaponManager weaponManager;
+    public UpgradeManager upgradeManager;
+    public BuffManager buffManager;
+    public BuffData damageBuff;
+    public BuffData speedBuff;
+    public BuffData dropBuff;
 
     [Header("UI")]
     public GameObject root;
@@ -24,24 +29,31 @@ public class ShopPanel : MonoBehaviour
     public GameObject buyGroup;
 
     [Header("Tables")]
-    public List<ShopItem> itemShopTable;          // 아이템(흙, 나사 등)
-    public List<WeaponShopItem> weaponShopTable;  // 무기 전용
+    public List<ShopItem> itemShopTable;         
+    public List<WeaponShopItem> weaponShopTable;  
     public List<WeaponShopItem> weaponSellTable;
+    public List<ShopItem> sellTable;
 
     ShopMode currentMode = ShopMode.Sell;
     bool isOpen;
     public bool IsOpen => isOpen;
 
+    public GameObject weaponGroup;
+    public GameObject upgradeGroup;
+    public GameObject buffGroup;
     void Start()
     {
         SetOpen(false);
         SetModeSell();
         SetInfo("상점");
     }
+    void Awake()
+    {
+        if (sellTable == null)
+            sellTable = new List<ShopItem>();
+    }
 
-    /* =========================
-     * 상점 열기 / 닫기
-     * ========================= */
+   
     public void SetOpen(bool open)
     {
         isOpen = open;
@@ -192,5 +204,142 @@ public class ShopPanel : MonoBehaviour
     {
         if (infoText)
             infoText.text = msg;
+    }
+    public void SellAll()
+    {
+        bool soldAny = false;
+
+        foreach (var item in sellTable)
+        {
+            int count = inventory.GetCount(item.type);
+            if (count <= 0) continue;
+
+            inventory.Consume(item.type, count);
+            playerMoney.AddMoney(item.sellPrice * count);
+            soldAny = true;
+        }
+
+        if (soldAny)
+            SetInfo("모두 판매 완료");
+        else
+            SetInfo("판매할 아이템이 없습니다.");
+    }
+    public void ApplyStageShop(ShopStageData data)
+    {
+        if (data == null)
+        {
+            Debug.LogError("ShopStageData가 null");
+            return;
+        }
+
+        // 테이블 교체
+        weaponShopTable = data.weaponShopTable;
+        itemShopTable = data.itemShopTable;
+        sellTable = data.sellTable;
+
+        // UI 그룹 전환
+        switch (data.shopType)
+        {
+            case ShopStageType.Weapon:
+                buyGroup.SetActive(true);
+                break;
+
+            case ShopStageType.Upgrade:
+                buyGroup.SetActive(true);
+                break;
+
+            case ShopStageType.Buff:
+                buyGroup.SetActive(true);
+                break;
+        }
+
+        SetInfo($"스테이지 {data.stage} 상점");
+    }
+    public void BuyDoubleDropBuff()
+    {
+        if (playerMoney.money < 100)
+        {
+            SetInfo("돈이 부족합니다.");
+            return;
+        }
+
+        playerMoney.AddMoney(-100);
+        buffManager.ApplyBuff(
+            BuffType.DoubleDrop,
+            1f,
+            30f   // 30초
+        );
+
+        SetInfo("30초간 드랍 2배!");
+    }
+    public void BuyDamageUpgrade()
+    {
+        int price = upgradeManager.GetDamageUpgradePrice();
+
+        if (playerMoney.money < price)
+        {
+            SetInfo("돈이 부족합니다.");
+            return;
+        }
+
+        playerMoney.AddMoney(-price);
+        upgradeManager.UpgradeDamage();
+
+        SetInfo($"데미지 업그레이드! (-{price}$)");
+    }
+    public void BuySpeedUpgrade()
+    {
+        int price = upgradeManager.GetSpeedUpgradePrice();
+
+        if (playerMoney.money < price)
+        {
+            SetInfo("돈이 부족합니다.");
+            return;
+        }
+
+        playerMoney.AddMoney(-price);
+        upgradeManager.UpgradeSpeed();
+
+        SetInfo($"공격속도 업그레이드! (-{price}$)");
+    }
+    public void BuyDamageBuff()
+    {
+        BuyBuff(damageBuff);
+    }
+    public void BuySpeedBuff()
+    {
+        BuyBuff(speedBuff); BuyBuff(speedBuff);
+    }
+    public void BuyDropBuff()
+    {
+        BuyBuff(dropBuff);
+    }
+
+    void BuyBuff(BuffData buff)
+    {
+        if (playerMoney.money < buff.price)
+        {
+            SetInfo("돈이 부족합니다.");
+            return;
+        }
+
+        playerMoney.AddMoney(-buff.price);
+        buffManager.ApplyBuff(buff.type, buff.value, buff.duration);
+
+        SetInfo($"{buff.type} 버프 적용!");
+    }
+    public void EnableWeaponShop(bool enable)
+    {
+        if (weaponGroup) weaponGroup.SetActive(enable);
+    }
+
+    public void EnableUpgradeShop(bool enable)
+    {
+        if (upgradeGroup) upgradeGroup.SetActive(enable);
+    }
+
+    public void EnableBuffShop(bool enable)
+    {
+        if (buffGroup) buffGroup.SetActive(enable);
     }
 }

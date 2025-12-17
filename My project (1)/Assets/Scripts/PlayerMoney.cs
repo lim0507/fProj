@@ -24,4 +24,9 @@ public class PlayerMoney : MonoBehaviour
         if (moneyText)
             moneyText.text = $"$ {money}";
     }
+    public void ResetMoney()
+    {
+        money = 0;
+        RefreshUI();
+    }
 }

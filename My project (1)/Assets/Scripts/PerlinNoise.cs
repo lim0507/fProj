@@ -25,7 +25,16 @@ public class PerlinNoise : MonoBehaviour
     {
         GenerateDownward();
     }
-
+    public void ResetMap()
+    {
+        // 기존 블록 제거
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+        // 생성 기록 초기화
+        generatedBlocks.Clear();
+    }
     void GenerateDownward()
     {
         int playerY = Mathf.FloorToInt(player.position.y);
